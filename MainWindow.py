@@ -2,11 +2,12 @@ from PyQt5.QtWidgets import QMainWindow, QApplication,QPushButton, QWidget, QSli
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QCursor,QBrush
 from PyQt5.QtCore import QPoint
+import sys
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        super(MainWindowUI, self).__init__()
-        loadUi("MainWindowUI.ui", self)
+        super(MainWindow, self).__init__()
+        loadUi("SamplingStudio.ui", self)
 
     
     def create_context_menu(self, position):
@@ -44,3 +45,9 @@ class MainWindow(QMainWindow):
     
     def contextMenuEvent(self, event):
         self.create_context_menu(event.pos())
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_()) 
