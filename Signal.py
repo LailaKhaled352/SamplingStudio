@@ -17,6 +17,8 @@ class Signal:
     
 
     def add_noise(self, SNR):
+
+        # SNR= 10log(base10)(signal_power/noise_power)
         signal_power=np.mean((self.signal_data_amplitude)**2)
         SNR_linear = 10**(SNR/10)
         noise_power = signal_power/SNR_linear
