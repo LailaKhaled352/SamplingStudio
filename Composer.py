@@ -12,7 +12,7 @@ class Composer:
         sinusoid_generated= sinusoid.generate_sinusoid(x_window)
         self.sinusoidals_list.append(sinusoid_generated)
         print(self.sinusoidals_list)
-        #self.compose_signal()
+        self.compose_signal()
     
     def compose_signal(self):
         self.composed_signal= np.sum(self.sinusoidals_list, axis=0)

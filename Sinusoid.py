@@ -11,5 +11,5 @@ class Sinusoid:
         self.sinusoid= self.amp* np.sin(2*math.pi*self.freq*x_window)
         return  self.sinusoid
 
-    #def get_sinusoid(self):
+
         
