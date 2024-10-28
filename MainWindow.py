@@ -12,6 +12,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         loadUi("SamplingStudio.ui", self)
+        self.signal=None
 
         #Laila
             # Initialize the existing PlotWidget
@@ -37,14 +38,14 @@ class MainWindow(QMainWindow):
         self.load_instance = Load()  # Instance of the Load class
 
     def show_default(self):
-        signal = Signal(graph_num=1)
-        self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
+        self.signal = Signal(graph_num=1)
+        self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
     
     def load_signal(self):
         file_path = self.load_instance.browse_signals()
         if file_path:
-            signal = Signal(graph_num=1, csv_path=file_path)
-            self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
+            self.signal = Signal(graph_num=1, csv_path=file_path)
+            self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
 
     def remove_signal(self):
         self.graph1.clear_signal()
