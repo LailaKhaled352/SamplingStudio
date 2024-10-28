@@ -1,8 +1,8 @@
-import sys
+from PyQt5.QtWidgets import QMainWindow, QApplication,QPushButton, QWidget, QSlider, QRadioButton, QComboBox, QTableWidget, QTableWidgetItem, QCheckBox,QMenu,QTextEdit, QDialog, QFileDialog, QInputDialog, QSizePolicy,QScrollArea,QVBoxLayout,QHBoxLayout
 from PyQt5.uic import loadUi
-import numpy as np
-import pandas as pd
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPushButton, QScrollBar
+from PyQt5.QtGui import QCursor,QBrush
+from PyQt5.QtCore import QPoint
+import sys
 import pyqtgraph as pg
 from Graph import Graph
 from Signal import Signal
@@ -12,10 +12,9 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         loadUi("SamplingStudio.ui", self)
-        self.setWindowTitle("Sampling Studio")
 
-
-        # Initialize the existing PlotWidget
+        #Laila
+            # Initialize the existing PlotWidget
         self.graph1 = self.findChild(pg.PlotWidget, 'graph1_2')
         self.graph2 = self.findChild(pg.PlotWidget, 'graph1')
         self.graph3 = self.findChild(pg.PlotWidget, 'graph2')
@@ -37,6 +36,10 @@ class MainWindow(QMainWindow):
 
         self.load_instance = Load()  # Instance of the Load class
 
+    def show_default(self):
+        signal = Signal(graph_num=1)
+        self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
+    
     def load_signal(self):
         file_path = self.load_instance.browse_signals()
         if file_path:
@@ -46,12 +49,10 @@ class MainWindow(QMainWindow):
     def remove_signal(self):
         self.graph1.clear_signal()
 
-    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
+    window.show_default()
     window.show()
-    sys.exit(app.exec_())
-
-
+    sys.exit(app.exec_()) 

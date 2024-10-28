@@ -5,7 +5,7 @@ import numpy as np
 
 
 class Signal:
-    def __init__(self, graph_num,csv_path):
+    def __init__(self, graph_num,csv_path ='mmg.csv'):
         self.csv_path = csv_path
         csvFile = pd.read_csv(self.csv_path)   
         self.signal_data_time = csvFile.iloc[:, 0].values
