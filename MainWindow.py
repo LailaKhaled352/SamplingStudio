@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
 
         self.save_signal_button= self.findChild(QPushButton, 'GenerateButton')
         self.save_signal_button.clicked.connect(self.save_signal)
-        
+
         # Initial configuration
         self.update_frequency_mode()
 
@@ -211,7 +211,14 @@ class MainWindow(QMainWindow):
         selected_signal= ComposedSignal.composed_signals_list[index]
         signal_data_time, signal_data_amplitude= selected_signal.load_composed_signal()
         #Code to be added to show the sampled signal on graph1 
-    
+        self.sample_rate = self.sampleSlider.value()
+        self.sample.max_freq= selected_signal.get_max_freq()
+        sampled_time, sampled_data =self.sample.sample_signal(signal_data_time,signal_data_amplitude,self.sample_rate)
+        self.clear_signals()
+        self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,signal_data_time,signal_data_amplitude)
+        self.reconstruct=Recosntruction(signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.reconstruction_method.currentText())
+        self.graph2.set_signal(signal_data_time,self.reconstruct.recons_method())     
+   
     def show_default(self):
         print('first 11')
 
@@ -222,7 +229,7 @@ class MainWindow(QMainWindow):
     
         sampled_time, sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
         print('first')
-        self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,self.signal)
+        self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,self.signal.signal_data_time,self.signal.signal_data_amplitude)
         print('second')
 
         self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.reconstruction_method.currentText())
@@ -238,7 +245,7 @@ class MainWindow(QMainWindow):
 
     def remove_signal(self):
             self.clear_signals()
-            signal = Signal(graph_num=1, csv_path=file_path)
+            signal = Signal(graph_num=1)
             self.reconstruct=Recosntruction(self.signal.signal_data_time,self.time_samples,self.amplitude_samples,self.reconstruction_method.currentText())
             self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
             self.plot_recosntruction()

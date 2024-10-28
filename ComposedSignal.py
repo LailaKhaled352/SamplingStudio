@@ -6,7 +6,7 @@ class ComposedSignal:
     def __init__(self):
         self.component_list_numpy=[]
         self.component_list_sinusoid=[]
-        self.signal_data_time= np.linspace(0,20,1000)
+        self.t_window= np.linspace(0,20,1000)
         self.composed_signal=None
 
     def compose_signal(self):
@@ -16,7 +16,7 @@ class ComposedSignal:
         sinusoid= Sinusoid(freq, amp, phase)
         self.component_list_sinusoid.append(sinusoid)
 
-        sinusoid_generated= sinusoid.generate_sinusoid(self.signal_data_time)
+        sinusoid_generated= sinusoid.generate_sinusoid(self.t_window)
         self.component_list_numpy.append(sinusoid_generated)
 
         self.compose_signal()
@@ -53,3 +53,10 @@ class ComposedSignal:
     def load_composed_signal(self):
         signal_data_time, signal_data_amplitude= self.t_window, self.composed_signal
         return  signal_data_time, signal_data_amplitude
+
+    def get_max_freq(self):
+        frequencies_list=[]
+        for sinusoid in self.component_list_sinusoid:
+            frequencies_list.append(sinusoid.freq)
+        max_freq= max(frequencies_list)
+        return max_freq

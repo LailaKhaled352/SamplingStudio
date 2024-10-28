@@ -31,17 +31,17 @@ class SamplingClass(QtWidgets.QWidget):
 
         return self.sampled_time, self.sampled_data
 
-    def update_sampling(self, graph,signal_data_time, signal_data_amplitude,sample_rate,signal):
+    def update_sampling(self, graph,signal_data_time, signal_data_amplitude,sample_rate, signal=None):
         self.sampled_time, self.sampled_data = self.sample_signal(signal_data_time, signal_data_amplitude,sample_rate)
-        self.plot_time_domain(graph, self.sampled_time, self.sampled_data, signal)
+        self.plot_time_domain(graph, self.sampled_time, self.sampled_data,signal_data_time, signal_data_amplitude )
          #self.plot_frequency_domain()
 
-    def plot_time_domain(self,graph,sampled_time,sampled_data,signal):
+    def plot_time_domain(self,graph,sampled_time,sampled_data,signal_data_time,signal_data_amplitude):
         
         graph.clear_signal()  # Clear previous plots
         # Plot original signal
  
-        graph.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
+        graph.set_signal(signal_data_time,signal_data_amplitude)
             
         # Plot sampled signal as points 
         scatter_plot = pg.ScatterPlotItem(
