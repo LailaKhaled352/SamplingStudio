@@ -11,17 +11,23 @@ class Signal:
         self.signal_data_time = csvFile.iloc[:, 0].values
         self.signal_data_amplitude = csvFile.iloc[:, 1].values
         self.graph_num= graph_num
-        self.noise=0 
+        self.noise=0
+        
+        
 
     def add_noise(self, SNR):
-
+        print("2")
         # SNR= 10log(base10)(signal_power/noise_power)
         signal_power=np.mean((self.signal_data_amplitude)**2)
         SNR_linear = 10**(SNR/10)
         noise_power = signal_power/SNR_linear
         self.noise = np.random.normal(0,np.sqrt(noise_power),self.signal_data_amplitude.shape)
-        self.signal_data_amplitude = self.signal_data_amplitude + self.noise
+        noisy_signal = self.signal_data_amplitude + self.noise
+        return noisy_signal
+        
+        
 
+    
     
     
     def set_signal_graph_num(self, new_graph_num):

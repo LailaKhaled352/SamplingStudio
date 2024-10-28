@@ -3,7 +3,7 @@ from pyqtgraph.Qt import QtCore
 from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
 class Graph:
-    def __init__(self, graphWidget, title):
+    def __init__(self, graphWidget, title, xlabel, ylabel):
         self.title = title
         self.graphWidget = graphWidget
 
@@ -15,19 +15,24 @@ class Graph:
             layout = graphWidget.layout()
         layout.addWidget(self.graphWidget)
 
-        
        
         # Set background and grid
         self.graphWidget.setBackground('#0c202a')
     
 
         # Configure plot labels and axis colors
-        self.graphWidget.getAxis('left').setPen('w')
-        self.graphWidget.getAxis('bottom').setPen('w')
-        self.graphWidget.getAxis('left').setTextPen('w')
-        self.graphWidget.getAxis('bottom').setTextPen('w')
-        
+        self.graphWidget.getAxis('left').setPen(pg.mkPen(color='w', width=2))
+        self.graphWidget.getAxis('bottom').setPen(pg.mkPen(color='w', width=2))
+        self.graphWidget.getAxis('left').setTextPen(pg.mkPen(color='w'))
+        self.graphWidget.getAxis('bottom').setTextPen(pg.mkPen(color='w'))
 
+        
+        # Label axes with color and size
+        self.graphWidget.setLabel('left', ylabel, **{'color': '#ffffff', 'font-size': '10pt'})
+        self.graphWidget.setLabel('bottom', xlabel, **{'color': '#ffffff', 'font-size': '10pt'})        
+
+
+        
         self.signal_plot = self.graphWidget.plot()
 
         self.signal_x = []
@@ -37,6 +42,7 @@ class Graph:
         self.graphWidget.setMouseEnabled(x=False, y=False)
 
     def set_signal(self, signal_x, signal_y):
+        self.clear_signal()
         self.signal_x = signal_x
         self.signal_y = signal_y
         self.graphWidget.plot(self.signal_x, self.signal_y, pen='#3286ad')

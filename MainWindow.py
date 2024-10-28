@@ -9,13 +9,22 @@ from Signal import Signal
 from Load import Load
 from ComposedSignal import ComposedSignal
 import numpy as np
+from sampling import SamplingClass
+import os 
+from Reconstruction import Recosntruction
+import numpy as np 
+import pywt
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         loadUi("SamplingStudio.ui", self)
+        self.setWindowTitle("Sampling Studio")
         self.signal=None
         self.composed_signal_instance= ComposedSignal()
+        self.sample=SamplingClass()
+        self.reconstruct=None
 
         #Laila
             # Initialize the existing PlotWidget
@@ -25,22 +34,33 @@ class MainWindow(QMainWindow):
         self.graph4 = self.findChild(pg.PlotWidget, 'graph3')
 
         # Create an instances of the Graph class for graph 1, 2, 3, 4
-        self.graph1 = Graph(self.graph1, "Graph 1")
-        self.graph2 = Graph(self.graph2, "Graph 2")
-        self.graph3 = Graph(self.graph3, "Graph 3")
-        self.graph4 = Graph(self.graph4, "Graph 4")
+        self.graph1 = Graph(self.graph1, "Graph 1", "Time", "Amplitude")
+        self.graph2 = Graph(self.graph2, "Graph 2", "Time", "Amplitude")
+        self.graph3 = Graph(self.graph3, "Graph 3", "Time", "Amplitude")
+        self.graph4 = Graph(self.graph4, "Graph 4", "Frequency", "Amplitude")
+         #hajar
+        self.sample_rate=1
+         # Find the slider and radio buttons
+        self.sampleSlider = self.findChild(QSlider, 'sampleSlider')
+        self.sampleSlider.setMinimum(1)
+        self.actualRadio = self.findChild(QRadioButton, 'actualRadio')
+        self.normalRadio = self.findChild(QRadioButton, 'normalRadio')
 
+         # Set up connections for slider and radio buttons
+        self.actualRadio.toggled.connect(self.update_frequency_mode)
+        self.normalRadio.toggled.connect(self.update_frequency_mode)
+        self.sampleSlider.valueChanged.connect(self.update_sampling_frequency)
+        
         # Connect upload signal button
         self.upload_button = self.findChild(QWidget, 'uploadButton_2')
         self.upload_button.clicked.connect(self.load_signal)
 
-        # Connect remove file button
+         # Connect remove file button
         self.remove_button = self.findChild(QPushButton, 'uploadButton')
-        self.remove_button.clicked.connect(self.remove_signal)
+        self.remove_button.clicked.connect(self.clear_signals)
 
         self.load_instance = Load()  # Instance of the Load class
-
-        #Fatma
+         #Fatma
         self.add_component_button= self.findChild(QPushButton, 'addComponent')
         self.frequency_entry= self.findChild(QSpinBox, 'freqSpinBox')
         self.phase_entry= self.findChild(QSpinBox, 'phaseSpinBox')
@@ -56,7 +76,85 @@ class MainWindow(QMainWindow):
 
         self.save_signal_button= self.findChild(QPushButton, 'GenerateButton')
         self.save_signal_button.clicked.connect(self.save_signal)
+        
+        # Initial configuration
+        self.update_frequency_mode()
 
+        # Judy
+
+        # noise connected
+        self.noise_slider = self.findChild(QSlider, 'noiseSlider')
+        self.noise_slider.setRange(1, 30) 
+        self.noise_slider.setValue(30)
+        self.noise_slider.valueChanged.connect(self.update_noise) 
+        
+        # reconstruction connected 
+        self.reconstruction_method = self.findChild(QComboBox, 'reconstructon_combobox')
+
+    
+
+    def plot_recosntruction(self):
+        self.graph2.set_signal(self.signal.signal_data_time,self.reconstruct.recons_method()) 
+
+
+    def update_frequency_mode(self):
+        if self.actualRadio.isChecked():
+            # Set slider for actual frequency mode
+            print('enter mode')
+            max_frequency = int(4 * self.sample.max_freq)
+            print({self.sample.max_freq})
+            self.sampleSlider.setRange(1, max_frequency)
+            self.sampleSlider.setSingleStep(1)
+            self.sampleSlider.setValue(int(2 * self.sample.max_freq))  # Start at 2*f_max
+            self.sample.sampling_mode = 0
+        if self.normalRadio.isChecked():
+            # Set slider for normalized frequency mode
+            self.sampleSlider.setRange(1, 4)
+            self.sampleSlider.setSingleStep(1)
+            self.sampleSlider.setValue(1)  # Start at 1 * f_max
+            self.sample.sampling_mode = 1
+   
+      # Immediately update sampling frequency based on new slider value
+        self.update_sampling_frequency()
+
+    def update_sampling_frequency(self):
+        if self.sample.sampling_mode == 0:
+            # Actual mode - slider directly reflects sampling frequency in Hz
+            self.sample_rate = max(self.sampleSlider.value(), 1) 
+            print('division b')
+        if self.sample.sampling_mode == 1:
+
+            # Normalized mode - slider value is a multiplier for f_max
+           self. sample_rate = max(self.sampleSlider.value() * self.sample.max_freq, 1)
+
+        # Update the sampling in SamplingClass
+        self.sample.sampling_interval = 1 / self.sample_rate
+        
+        if self.signal is not None:  # Ensure a signal is loaded
+            self.sample.update_sampling( self.graph1,self.signal.signal_data_time, self.signal.signal_data_amplitude,self.sample_rate,self.signal)
+                
+            self.reconstruct.update_recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.reconstruction_method.currentText())
+            # self.plot_recosntruction()
+
+         
+
+
+
+
+
+
+        
+    # Judy 
+    def update_noise(self):
+        self.graph1.clear_signal()
+        updated_signal_data_amplitude =self.signal.add_noise(self.noise_slider.value())
+        self.graph1.set_signal(self.signal.signal_data_time, updated_signal_data_amplitude)
+        
+        
+   
+   
+
+        
     #Fatma
     def add_component(self):
         freq= self.frequency_entry.value() 
@@ -115,16 +213,38 @@ class MainWindow(QMainWindow):
         #Code to be added to show the sampled signal on graph1 
     
     def show_default(self):
+        print('first 11')
+
         self.signal = Signal(graph_num=1)
+         # Get the sample rate from the slider
+        self.sample_rate = self.sampleSlider.value()
+        self.sample.max_freq=self.sample.get_max_freq(self.signal.signal_data_time, self.signal.signal_data_amplitude)
+    
+        sampled_time, sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
+        print('first')
+        self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,self.signal)
+        print('second')
+
+        self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.reconstruction_method.currentText())
         self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
+        self.plot_recosntruction()
     
     def load_signal(self):
         file_path = self.load_instance.browse_signals()
         if file_path:
             self.signal = Signal(graph_num=1, csv_path=file_path)
             self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
+            self.update_sampling_frequency()
 
     def remove_signal(self):
+            self.clear_signals()
+            signal = Signal(graph_num=1, csv_path=file_path)
+            self.reconstruct=Recosntruction(self.signal.signal_data_time,self.time_samples,self.amplitude_samples,self.reconstruction_method.currentText())
+            self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
+            self.plot_recosntruction()
+
+    def clear_signals(self):
+        # Clear signals from all graphs
         self.graph1.clear_signal()
 
 
