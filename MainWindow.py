@@ -46,6 +46,10 @@ class MainWindow(QMainWindow):
     def remove_signal(self):
         self.graph1.clear_signal()
 
+   
+
+
+
     
 # Run the application
 if __name__ == '__main__':
