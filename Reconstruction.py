@@ -1,23 +1,40 @@
 import numpy as np 
 import pywt
 class Recosntruction:
-    def __init__(self,time_before_sampling,time_samples,x_samples,T_s,reconstruction_type):
+    def __init__(self,time_before_sampling,time_samples,x_samples,T_s,reconstruction_type="Whittaker-Shannon"):
         self.time_before_sampling=time_before_sampling
         self.time_samples=time_samples
         self.x_samples=x_samples
         self.T_s=T_s
         self.reconstruction_type=reconstruction_type
-    
-        if reconstruction_type == "Whittaker-Shannon":
-             self.whittaker_shannon_reconstruction()
+        # until sampling is done 
+        self.f_max = 10   
+        self.f_s = 20     
+        self.T_s = 1 / self.f_s  
+        self.time_range = np.linspace(-1, 1, 1000)          
 
-        elif reconstruction_type == "Wavelet":
-            self.wavelet_reconstruction()
+    def recons_method(self):
+        if self.reconstruction_type == "Whittaker-Shannon":
+            return self.whittaker_shannon_reconstruction()
+
+        elif self.reconstruction_type == "Wavelet":
+            return self.wavelet_reconstruction()
 
         else:
-            self.spectral_extrapolation()         
-
+            return self.spectral_extrapolation()
+        
+    def update_recosntruction(self,time_before_sampling,time_samples,x_samples,T_s,reconstruction_type):
+        print("reconstruction1")
+        self.time_before_sampling=time_before_sampling
+        self.time_samples=time_samples
+        self.x_samples=x_samples
+        self.T_s=T_s
+        self.reconstruction_type=reconstruction_type
+        print("reconstruction2")
+    
+       
     def whittaker_shannon_reconstruction(self):
+        print("reconstruction3")
         sinc_matrix = np.sinc((self.time_before_sampling[:, None] - self.time_samples) / self.T_s)
         return np.dot(sinc_matrix, self.x_samples)
     

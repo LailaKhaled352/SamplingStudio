@@ -9,13 +9,19 @@ from Signal import Signal
 from Load import Load
 from sampling import SamplingClass
 import os 
+from Reconstruction import Recosntruction
+import numpy as np 
+import pywt
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         loadUi("SamplingStudio.ui", self)
+        self.setWindowTitle("Sampling Studio")
         self.signal=None
         self.sample=SamplingClass()
+        self.reconstruct=None
 
         #Laila
             # Initialize the existing PlotWidget
@@ -54,6 +60,23 @@ class MainWindow(QMainWindow):
         # Initial configuration
         self.update_frequency_mode()
 
+        # Judy
+
+        # noise connected
+        self.noise_slider = self.findChild(QSlider, 'noiseSlider')
+        self.noise_slider.setRange(1, 30) 
+        self.noise_slider.setValue(30)
+        self.noise_slider.valueChanged.connect(self.update_noise) 
+        
+        # reconstruction connected 
+        self.reconstruction_method = self.findChild(QComboBox, 'reconstructon_combobox')
+
+    
+
+    def plot_recosntruction(self):
+        self.graph2.set_signal(self.signal.signal_data_time,self.reconstruct.recons_method()) 
+
+
     def update_frequency_mode(self):
         if self.actualRadio.isChecked():
             # Set slider for actual frequency mode
@@ -88,7 +111,28 @@ class MainWindow(QMainWindow):
         self.sample.sampling_interval = 1 / self.sample_rate
         
         if self.signal is not None:  # Ensure a signal is loaded
-         self.sample.update_sampling( self.graph1,self.signal.signal_data_time, self.signal.signal_data_amplitude,self.sample_rate,self.signal)
+            self.sample.update_sampling( self.graph1,self.signal.signal_data_time, self.signal.signal_data_amplitude,self.sample_rate,self.signal)
+                
+            self.reconstruct.update_recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.reconstruction_method.currentText())
+            # self.plot_recosntruction()
+
+         
+
+
+
+
+
+
+        
+    # Judy 
+    def update_noise(self):
+        self.graph1.clear_signal()
+        updated_signal_data_amplitude =self.signal.add_noise(self.noise_slider.value())
+        self.graph1.set_signal(self.signal.signal_data_time, updated_signal_data_amplitude)
+        
+        
+   
+   
 
     def show_default(self):
         print('first 11')
@@ -103,7 +147,9 @@ class MainWindow(QMainWindow):
         self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,self.signal)
         print('second')
 
-
+        self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.reconstruction_method.currentText())
+        self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
+        self.plot_recosntruction()
     
     def load_signal(self):
         file_path = self.load_instance.browse_signals()
@@ -111,7 +157,16 @@ class MainWindow(QMainWindow):
             self.signal = Signal(graph_num=1, csv_path=file_path)
             self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
             self.update_sampling_frequency()
+
     def remove_signal(self):
+            self.clear_signals()
+            signal = Signal(graph_num=1, csv_path=file_path)
+            self.reconstruct=Recosntruction(self.signal.signal_data_time,self.time_samples,self.amplitude_samples,self.reconstruction_method.currentText())
+            self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
+            self.plot_recosntruction()
+
+    def clear_signals(self):
+        # Clear signals from all graphs
         self.graph1.clear_signal()
 
 

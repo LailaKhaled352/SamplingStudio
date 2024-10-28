@@ -44,7 +44,7 @@
           </property>
           <property name="font">
            <font>
-            <family>Arial</family>
+            <family>Arial,Helvetica,sans-serif</family>
             <pointsize>-1</pointsize>
             <weight>75</weight>
             <bold>true</bold>
@@ -112,7 +112,95 @@ QPushButton:pressed {
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>icons/upload-square-svgrepo-com.png</normaloff>icons/upload-square-svgrepo-com.png</iconset>
+            <normaloff>:/Icons/Icons/upload-square-svgrepo-com.png</normaloff>:/Icons/Icons/upload-square-svgrepo-com.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>25</width>
+            <height>25</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="uploadButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial,Helvetica,sans-serif</family>
+            <pointsize>-1</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton{
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #405cf5;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+ 
+  font-size: 100%;
+  height: 28px;
+  line-height: 1.15;
+  margin: 0 0 0 25px;
+  outline: none;
+  overflow: hidden;
+  padding: 0 10px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  touch-action: manipulation;
+  width:120px;
+}
+
+QPushButton {
+    background-color: #235d79;    /* Blue color */
+    border-radius: 10px;          /* Rounded corners */
+    border: none;                 /* No border */
+    color: white;                 /* Text color */
+    padding: 5px 15px;            /* Padding for better text alignment */
+    
+    font-family: Arial, Helvetica, sans-serif;  /* Font family */
+    font-size: 16px;              /* Font size */
+    font-weight: bold;            /* Bold text */
+    letter-spacing: 1px;          /* Spacing between letters */
+    text-transform: uppercase;    /* Uppercase letters */
+}
+
+QPushButton:hover {
+    background-color: #2e6d8e;    /* Slightly lighter blue when hovering */
+}
+
+QPushButton:pressed {
+    background-color: #1b4b61;    /* Darker blue when pressed */
+}
+
+
+
+</string>
+          </property>
+          <property name="text">
+           <string>remove File</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/Icons/Icons/upload-square-svgrepo-com.png</normaloff>:/Icons/Icons/upload-square-svgrepo-com.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -144,10 +232,7 @@ QPushButton:pressed {
            <widget class="QLabel" name="mixer">
             <property name="font">
              <font>
-              <family>Overpass Black</family>
               <pointsize>-1</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
              </font>
             </property>
             <property name="styleSheet">
@@ -471,7 +556,7 @@ QListWidget::item:hover {
              <widget class="QPushButton" name="addComponent">
               <property name="font">
                <font>
-                <family>Arial</family>
+                <family>Arial,Helvetica,sans-serif</family>
                 <pointsize>-1</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
@@ -558,7 +643,7 @@ QPushButton:pressed {
              <widget class="QPushButton" name="GenerateButton">
               <property name="font">
                <font>
-                <family>Arial</family>
+                <family>Arial,Helvetica,sans-serif</family>
                 <pointsize>-1</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
@@ -695,10 +780,7 @@ QPushButton:pressed {
              <widget class="QLabel" name="Signals">
               <property name="font">
                <font>
-                <family>Overpass Black</family>
                 <pointsize>-1</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
                </font>
               </property>
               <property name="styleSheet">
@@ -797,10 +879,7 @@ QListWidget::item:hover {
              <widget class="QLabel" name="Components">
               <property name="font">
                <font>
-                <family>Overpass Black</family>
                 <pointsize>-1</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
                </font>
               </property>
               <property name="styleSheet">
@@ -1041,10 +1120,7 @@ QListWidget::item:hover {
          <widget class="QLabel" name="Noise">
           <property name="font">
            <font>
-            <family>Overpass Black</family>
             <pointsize>-1</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
@@ -1053,7 +1129,7 @@ font-size:20px;
 margin: 0 0 ;</string>
           </property>
           <property name="text">
-           <string>Noise</string>
+           <string>SNR</string>
           </property>
          </widget>
         </item>
@@ -1187,10 +1263,7 @@ border: 1px solid #3498db; /* Border of the handle when pressed */
          <widget class="QLabel" name="Frequency_2">
           <property name="font">
            <font>
-            <family>Overpass Black</family>
             <pointsize>-1</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
@@ -1479,10 +1552,7 @@ margin-top: 3px;</string>
          <widget class="QLabel" name="Noise_2">
           <property name="font">
            <font>
-            <family>Overpass Black</family>
             <pointsize>-1</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
@@ -1527,7 +1597,7 @@ margin: 0 0 ;</string>
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="reconstructon_combobox">
           <property name="cursor">
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
@@ -1587,12 +1657,17 @@ QComboBox::item:selected {
           </property>
           <item>
            <property name="text">
-            <string>Method1</string>
+            <string>Whittaker-Shannon</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Method2</string>
+            <string>Spectral Extrapolation</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wavelet</string>
            </property>
           </item>
          </widget>
@@ -1622,7 +1697,7 @@ QComboBox::item:selected {
      <x>0</x>
      <y>0</y>
      <width>1162</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
