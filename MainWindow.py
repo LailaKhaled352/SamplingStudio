@@ -93,7 +93,7 @@ class MainWindow(QMainWindow):
         self.reconstruction_method = self.findChild(QComboBox, 'reconstructon_combobox')
         self.rec_method = "Whittaker-Shannon"
         self.reconstruction_method.currentIndexChanged.connect(self.handle_combobox_change)
-        # self.plot_recosntruction()
+        
 
 
         self.sampled_time=None
@@ -108,6 +108,7 @@ class MainWindow(QMainWindow):
 
     def handle_combobox_change(self, index):
         self.rec_method = self.reconstruction_method.currentText()
+        self.plot_recosntruction()
 
     def update_sampling_freq(self):
         if self.signal is not None:
@@ -122,8 +123,9 @@ class MainWindow(QMainWindow):
             print('enter mode')
             # max_frequency = int(4 * self.sample.max_freq)
             print({self.sample.max_freq})
-            self.sampleSlider.setRange(0, 4 * self.sample.max_freq)
-            self.sampleSlider.setSingleStep(self.sample.max_freq)
+            self.sampleSlider.setMinimum(int(self.sample.max_freq))
+            self.sampleSlider.setMaximum(int(4 * self.sample.max_freq))
+            self.sampleSlider.setSingleStep(int(self.sample.max_freq))
             self.sampleSlider.setValue(int(2 * self.sample.max_freq))  # Start at 2*f_max
             self.sample.sampling_mode = 0
         if self.normalRadio.isChecked():
