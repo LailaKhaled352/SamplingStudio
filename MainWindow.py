@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
          # Set up connections for slider and radio buttons
         self.actualRadio.toggled.connect(self.update_frequency_mode)
         self.normalRadio.toggled.connect(self.update_frequency_mode)
-        self.sampleSlider.valueChanged.connect(self.update_sampling_frequency)
+        self.sampleSlider.valueChanged.connect(self.update_sampling_freq)
         
         # Connect upload signal button
         self.upload_button = self.findChild(QWidget, 'uploadButton_2')
@@ -60,7 +60,8 @@ class MainWindow(QMainWindow):
         self.remove_button.clicked.connect(self.clear_signals)
 
         self.load_instance = Load()  # Instance of the Load class
-         #Fatma
+        
+        #Fatma
         self.add_component_button= self.findChild(QPushButton, 'addComponent')
         self.frequency_entry= self.findChild(QSpinBox, 'freqSpinBox')
         self.phase_entry= self.findChild(QSpinBox, 'phaseSpinBox')
@@ -78,7 +79,7 @@ class MainWindow(QMainWindow):
         self.save_signal_button.clicked.connect(self.save_signal)
 
         # Initial configuration
-        self.update_frequency_mode()
+        # self.update_frequency_mode()
 
         # Judy
 
@@ -90,21 +91,39 @@ class MainWindow(QMainWindow):
         
         # reconstruction connected 
         self.reconstruction_method = self.findChild(QComboBox, 'reconstructon_combobox')
+        self.rec_method = "Whittaker-Shannon"
+        self.reconstruction_method.currentIndexChanged.connect(self.handle_combobox_change)
+        # self.plot_recosntruction()
+
+
+        self.sampled_time=None
+        self.sampled_data=None
 
     
 
     def plot_recosntruction(self):
-        self.graph2.set_signal(self.signal.signal_data_time,self.reconstruct.recons_method()) 
+        if self.signal is not None:
+            self.reconstruct.update_recosntruction(self.graph2,self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.rec_method)
+
+
+    def handle_combobox_change(self, index):
+        self.rec_method = self.reconstruction_method.currentText()
+
+    def update_sampling_freq(self):
+        if self.signal is not None:
+            self.update_sampling_frequency(self.signal.signal_data_amplitude)      
+            
 
 
     def update_frequency_mode(self):
+
         if self.actualRadio.isChecked():
             # Set slider for actual frequency mode
             print('enter mode')
-            max_frequency = int(4 * self.sample.max_freq)
+            # max_frequency = int(4 * self.sample.max_freq)
             print({self.sample.max_freq})
-            self.sampleSlider.setRange(1, max_frequency)
-            self.sampleSlider.setSingleStep(1)
+            self.sampleSlider.setRange(0, 4 * self.sample.max_freq)
+            self.sampleSlider.setSingleStep(self.sample.max_freq)
             self.sampleSlider.setValue(int(2 * self.sample.max_freq))  # Start at 2*f_max
             self.sample.sampling_mode = 0
         if self.normalRadio.isChecked():
@@ -115,33 +134,35 @@ class MainWindow(QMainWindow):
             self.sample.sampling_mode = 1
    
       # Immediately update sampling frequency based on new slider value
-        self.update_sampling_frequency()
+        if self.signal is not None:
+            self.update_sampling_frequency(self.signal.signal_data_amplitude)
 
-    def update_sampling_frequency(self):
+    def update_sampling_frequency(self,signal_data_amplitude):
+            
         if self.sample.sampling_mode == 0:
             # Actual mode - slider directly reflects sampling frequency in Hz
+            print(self.sampleSlider.value())
             self.sample_rate = max(self.sampleSlider.value(), 1) 
             print('division b')
         if self.sample.sampling_mode == 1:
 
             # Normalized mode - slider value is a multiplier for f_max
-           self. sample_rate = max(self.sampleSlider.value() * self.sample.max_freq, 1)
+           self.sample_rate = max(self.sampleSlider.value() * self.sample.max_freq, 1)
 
         # Update the sampling in SamplingClass
         self.sample.sampling_interval = 1 / self.sample_rate
         
         if self.signal is not None:  # Ensure a signal is loaded
-            self.sample.update_sampling( self.graph1,self.signal.signal_data_time, self.signal.signal_data_amplitude,self.sample_rate,self.signal)
-                
-            self.reconstruct.update_recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.reconstruction_method.currentText())
-            # self.plot_recosntruction()
+            self.sample.update_sampling( self.graph1,self.signal.signal_data_time,signal_data_amplitude,self.sample_rate,self.signal)
+            self.plot_recosntruction()
 
   
     # Judy 
     def update_noise(self):
         self.graph1.clear_signal()
         updated_signal_data_amplitude =self.signal.add_noise(self.noise_slider.value())
-        self.graph1.set_signal(self.signal.signal_data_time, updated_signal_data_amplitude)
+        self.update_sampling_frequency(updated_signal_data_amplitude)
+        self.plot_recosntruction()
         
      
     #Fatma
@@ -218,13 +239,12 @@ class MainWindow(QMainWindow):
         self.sample_rate = self.sampleSlider.value()
         self.sample.max_freq=self.sample.get_max_freq(self.signal.signal_data_time, self.signal.signal_data_amplitude)
     
-        sampled_time, sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
+        self.sampled_time, self.sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
         print('first')
-        self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,self.signal.signal_data_time,self.signal.signal_data_amplitude)
+        self.sample.plot_time_domain(self.graph1,self.sampled_time,self.sampled_data,self.signal.signal_data_time,self.signal.signal_data_amplitude)
         print('second')
 
-        self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.reconstruction_method.currentText())
-        self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
+        self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.rec_method)
         self.plot_recosntruction()
     
     def load_signal(self):
@@ -232,7 +252,7 @@ class MainWindow(QMainWindow):
         if file_path:
             self.signal = Signal(graph_num=1, csv_path=file_path)
             self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
-            self.update_sampling_frequency()
+            self.update_sampling_frequency(self.signal.signal_data_amplitude)
 
     def clear_signals(self):
         self.graph1.clear_signal()

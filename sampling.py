@@ -31,10 +31,10 @@ class SamplingClass(QtWidgets.QWidget):
 
         return self.sampled_time, self.sampled_data
 
-    def update_sampling(self, graph,signal_data_time, signal_data_amplitude,sample_rate, signal=None):
+    def update_sampling(self, graph,signal_data_time, signal_data_amplitude,sample_rate, signal):
         self.sampled_time, self.sampled_data = self.sample_signal(signal_data_time, signal_data_amplitude,sample_rate)
         self.plot_time_domain(graph, self.sampled_time, self.sampled_data,signal_data_time, signal_data_amplitude )
-         #self.plot_frequency_domain()
+
 
     def plot_time_domain(self,graph,sampled_time,sampled_data,signal_data_time,signal_data_amplitude):
         
