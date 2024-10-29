@@ -33,6 +33,7 @@ class Recosntruction:
         graph2.clear_signal()
         graph2.set_signal(self.time_before_sampling, self.recons_method())
         print("reconstruction2")
+        return self.recons_method() 
     
        
     def whittaker_shannon_reconstruction(self):
