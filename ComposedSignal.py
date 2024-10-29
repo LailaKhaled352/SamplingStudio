@@ -60,3 +60,9 @@ class ComposedSignal:
             frequencies_list.append(sinusoid.freq)
         max_freq= max(frequencies_list)
         return max_freq
+    
+    def to_csv(self):
+         file_name= f"output{len(ComposedSignal.composed_signals_list)}.csv"
+         data= np.column_stack((self.t_window, self.composed_signal))
+         np.savetxt(file_name, data, delimiter=",", comments='', fmt='%f')
+         return file_name

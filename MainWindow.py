@@ -136,25 +136,14 @@ class MainWindow(QMainWindow):
             self.reconstruct.update_recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.reconstruction_method.currentText())
             # self.plot_recosntruction()
 
-         
-
-
-
-
-
-
-        
+  
     # Judy 
     def update_noise(self):
         self.graph1.clear_signal()
         updated_signal_data_amplitude =self.signal.add_noise(self.noise_slider.value())
         self.graph1.set_signal(self.signal.signal_data_time, updated_signal_data_amplitude)
         
-        
-   
-   
-
-        
+     
     #Fatma
     def add_component(self):
         freq= self.frequency_entry.value() 
@@ -209,15 +198,17 @@ class MainWindow(QMainWindow):
 
     def load_composed_signal(self, index):
         selected_signal= ComposedSignal.composed_signals_list[index]
-        signal_data_time, signal_data_amplitude= selected_signal.load_composed_signal()
-        #Code to be added to show the sampled signal on graph1 
         self.sample_rate = self.sampleSlider.value()
         self.sample.max_freq= selected_signal.get_max_freq()
-        sampled_time, sampled_data =self.sample.sample_signal(signal_data_time,signal_data_amplitude,self.sample_rate)
-        self.clear_signals()
-        self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,signal_data_time,signal_data_amplitude)
-        self.reconstruct=Recosntruction(signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.reconstruction_method.currentText())
-        self.graph2.set_signal(signal_data_time,self.reconstruct.recons_method())     
+        path= selected_signal.to_csv()
+        self.signal = Signal(graph_num=1, csv_path=path)
+
+        sampled_time, sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
+        self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,self.signal.signal_data_time,self.signal.signal_data_amplitude)
+        self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.reconstruction_method.currentText())
+        #self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
+        self.plot_recosntruction()
+       
    
     def show_default(self):
         print('first 11')
@@ -243,15 +234,7 @@ class MainWindow(QMainWindow):
             self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
             self.update_sampling_frequency()
 
-    def remove_signal(self):
-            self.clear_signals()
-            signal = Signal(graph_num=1)
-            self.reconstruct=Recosntruction(self.signal.signal_data_time,self.time_samples,self.amplitude_samples,self.reconstruction_method.currentText())
-            self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
-            self.plot_recosntruction()
-
     def clear_signals(self):
-        # Clear signals from all graphs
         self.graph1.clear_signal()
 
 
