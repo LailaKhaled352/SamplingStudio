@@ -12,7 +12,6 @@ class SamplingClass(QtWidgets.QWidget):
         self.sampling_interval = None
         self.sampling_mode = 0  # 0 for actual, 1 for normalized
         self.max_freq=0
-    
 
     
 
@@ -54,47 +53,43 @@ class SamplingClass(QtWidgets.QWidget):
         graph.graphWidget.addItem(scatter_plot)  # Access the PlotWidget to add the scatter plot
         print('plotting function')
 
-    def plot_frequency_domain(self,graph,sample_rate):
-    # Perform FFT on the sampled data
+    def plot_frequency_domain(self, graph, sample_rate):
      if self.sampled_data is not None:
-      fft_result = np.fft.fft(self.sampled_data)
-      freqs = np.fft.fftfreq(len(fft_result), self.sampling_interval)
-      magnitude = np.abs(fft_result)
+        fft_result = np.fft.fft(self.sampled_data)
+        freqs = np.fft.fftfreq(len(fft_result), self.sampling_interval)
+        magnitude = np.abs(fft_result)
 
-    # Clear previous frequency plots
-      graph.clear_signal()
+        # Clear previous frequency plots
+        graph.clear_signal()
 
-    # Plot the original frequency spectrum
-      original_plot = pg.PlotDataItem(
-                freqs,
-                magnitude,
-                pen=pg.mkPen('g', width=2)
-            )
-      graph.graphWidget.addItem(original_plot)
+        # Plot the original frequency spectrum in green
+        original_plot = pg.PlotDataItem(
+            freqs,
+            magnitude,
+            pen=pg.mkPen('g', width=2)
+        )
+        graph.graphWidget.addItem(original_plot)
 
-    # Only show aliasing effects if sampling frequency < 2 * max frequency
-    
-      if sample_rate < 2 * self.max_freq:
-        # Set up arrays for aliasing visualization
-         repeated_freqs = []
-         repeated_magnitudes = []
+        # Calculate the shift based on the sampling rate
+        shift_frequency = sample_rate
 
-        # Number of repetitions to account for aliasing
-         num_repeats = int(np.ceil((2 * self.max_freq) / sample_rate)) + 1
+        # Plot left and right shifted frequency spectra
+        # Left shift
+        shifted_freqs_left = freqs - shift_frequency
+        left_shifted_plot = pg.PlotDataItem(
+            shifted_freqs_left,
+            magnitude,
+            pen=pg.mkPen('r', width=1, style=pg.QtCore.Qt.DashLine)
+        )
+        graph.graphWidget.addItem(left_shifted_plot)
 
-        # Repeat the spectrum to show aliasing at different harmonics
-         for i in range(-num_repeats, num_repeats + 1):
-            repeated_freqs.extend(freqs + i * sample_rate)
-            repeated_magnitudes.extend(magnitude)
+        # Right shift
+        shifted_freqs_right = freqs + shift_frequency
+        right_shifted_plot = pg.PlotDataItem(
+            shifted_freqs_right,
+            magnitude,
+            pen=pg.mkPen('b', width=1, style=pg.QtCore.Qt.DashLine)
+        )
+        graph.graphWidget.addItem(right_shifted_plot)
 
-        # Convert lists to numpy arrays for plotting
-         repeated_freqs = np.array(repeated_freqs)
-         repeated_magnitudes = np.array(repeated_magnitudes)
-
-        # Plot the repeated frequency spectrum
-         aliased_plot = pg.PlotDataItem(
-                    repeated_freqs,
-                    repeated_magnitudes,
-                    pen=pg.mkPen('r', width=2)
-                )
-         graph.graphWidget.addItem(aliased_plot)
+       

@@ -39,7 +39,7 @@ class Graph:
         self.signal_y = []
 
         # Disable panning
-        self.graphWidget.setMouseEnabled(x=False, y=False)
+        # self.graphWidget.setMouseEnabled(x=False, y=False)
 
     def set_signal(self, signal_x, signal_y):
         self.clear_signal()
