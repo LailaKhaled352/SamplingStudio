@@ -97,7 +97,11 @@ class MainWindow(QMainWindow):
         self.noise_slider = self.findChild(QSlider, 'noiseSlider')
         self.noise_slider.setRange(1, 30) 
         self.noise_slider.setValue(30)
+        self.noise_label = self.findChild(QLabel, 'snrlabel')
         self.noise_slider.valueChanged.connect(self.update_noise) 
+        value = self.noise_slider.value()
+        self.noise_label.setText(f"{value} dB")
+        
 
         # reconstruction connected 
         self.reconstruction_method = self.findChild(QComboBox, 'reconstructon_combobox')
@@ -114,9 +118,9 @@ class MainWindow(QMainWindow):
 
 
     def plot_recosntruction(self):
-        reconstructed_signal = self.reconstruct.recons_method()
         if self.signal is not None:
             self.reconstruct.update_recosntruction(self.graph2,self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.rec_method)
+            reconstructed_signal = self.reconstruct.recons_method()
         # Calculate error and plot it in graph3
             self.error_calculation = ErrorCalculation(self.signal.signal_data_time,self.signal.signal_data_amplitude, reconstructed_signal)
             self.error_calculation.calculate_error()
@@ -225,15 +229,15 @@ class MainWindow(QMainWindow):
         if self.signals_List.underMouse():
             signals_List_widget = self.signals_List
             selected_row = signals_List_widget.selectionModel().currentIndex().row()
+            load_signal_action = context_menu.addAction("Load Signal")
+            load_signal_action.triggered.connect(lambda: self.load_composed_signal(selected_row))
+            show_components_action = context_menu.addAction("Show Components")
+            show_components_action.triggered.connect(lambda: ComposedSignal.show_components(self.components_List, selected_row))
             remove_signal_action = context_menu.addAction("Remove Signal")
             remove_signal_action.triggered.connect(lambda: ComposedSignal.remove_signal(signals_List_widget,self.components_List, selected_row))
 
-            show_components_action = context_menu.addAction("Show Components")
-            show_components_action.triggered.connect(lambda: ComposedSignal.show_components(self.components_List, selected_row))
 
 
-            load_signal_action = context_menu.addAction("Load Signal")
-            load_signal_action.triggered.connect(lambda: self.load_composed_signal(selected_row))
 
         elif self.components_List.underMouse():
             components_list_widget= self.components_List

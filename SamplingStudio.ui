@@ -1167,7 +1167,7 @@ margin: 0 0 ;</string>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_12">
           <item>
-           <widget class="QLabel" name="fmaxLabel_2">
+           <widget class="QLabel" name="snrlabel">
             <property name="font">
              <font>
               <family>Overpass SemiBold</family>
@@ -1662,7 +1662,7 @@ QComboBox::item:selected {
           </item>
           <item>
            <property name="text">
-            <string>Spectral Extrapolation</string>
+            <string>Zero Order Hold</string>
            </property>
           </item>
           <item>
