@@ -141,9 +141,9 @@ class MainWindow(QMainWindow):
             print('enter mode')
             # max_frequency = int(4 * self.sample.max_freq)
             print({self.sample.max_freq})
-            self.sampleSlider.setMinimum(int(self.sample.max_freq))
+            self.sampleSlider.setMinimum(1)
             self.sampleSlider.setMaximum(int(4 * self.sample.max_freq))
-            self.sampleSlider.setSingleStep(int(self.sample.max_freq))
+            self.sampleSlider.setSingleStep(1)
             self.sampleSlider.setValue(int(2 * self.sample.max_freq))  # Start at 2*f_max
             self.sample.sampling_mode = 0
             # Update fmax label
@@ -184,7 +184,7 @@ class MainWindow(QMainWindow):
 
         if self.signal is not None:  # Ensure a signal is loaded
             self.sample.update_sampling( self.graph1,self.signal.signal_data_time,signal_data_amplitude,self.sample_rate,self.signal)
-            self.sample.plot_frequency_domain(self.graph4, self.sample_rate)
+            self.sample.plot_frequency_domain(self.graph4, self.sample_rate,self.signal.signal_data_time,self.signal.signal_data_amplitude)
             self.plot_recosntruction()
             self.update_frequency_label() 
 
@@ -247,6 +247,7 @@ class MainWindow(QMainWindow):
         # Get the global position of the cursor
         cursor_position = QCursor.pos()
         context_menu.exec_(cursor_position)
+
     def update_frequency_label(self):
      if self.actualRadio.isChecked():
         self.fmaxLabel.setText(f"{4 * self.sample.max_freq} Hz")
@@ -300,7 +301,7 @@ class MainWindow(QMainWindow):
         print('second')
 
         self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.rec_method)
-        self.sample.plot_frequency_domain(self.graph4,self.sample_rate)
+        self.sample.plot_frequency_domain(self.graph4,self.sample_rate,self.signal.signal_data_time, self.signal.signal_data_amplitude)
         self.plot_recosntruction()
         self.update_frequency_mode()
         self.update_frequency_label() 

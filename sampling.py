@@ -1,3 +1,4 @@
+
 import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtWidgets, QtCore
@@ -12,6 +13,7 @@ class SamplingClass(QtWidgets.QWidget):
         self.sampling_interval = None
         self.sampling_mode = 0  # 0 for actual, 1 for normalized
         self.max_freq=0
+     
 
     
 
@@ -53,10 +55,10 @@ class SamplingClass(QtWidgets.QWidget):
         graph.graphWidget.addItem(scatter_plot)  # Access the PlotWidget to add the scatter plot
         print('plotting function')
 
-    def plot_frequency_domain(self, graph, sample_rate):
-     if self.sampled_data is not None:
-        fft_result = np.fft.fft(self.sampled_data)
-        freqs = np.fft.fftfreq(len(fft_result), self.sampling_interval)
+    def plot_frequency_domain(self, graph, sample_rate,signal_data_time,signal_data_amplitude):
+     if signal_data_amplitude is not None:
+        fft_result = np.fft.fft(signal_data_amplitude)
+        freqs = np.fft.fftfreq(len(fft_result), (signal_data_time[1] - signal_data_time[0]))
         magnitude = np.abs(fft_result)
 
         # Clear previous frequency plots
@@ -66,10 +68,11 @@ class SamplingClass(QtWidgets.QWidget):
         original_plot = pg.PlotDataItem(
             freqs,
             magnitude,
-            pen=pg.mkPen('g', width=2)
+            pen=pg.mkPen('g', width=6)
         )
         graph.graphWidget.addItem(original_plot)
 
+        graph.graphWidget.setLimits(xMin=-9 * self.max_freq, xMax=9* self.max_freq)
         # Calculate the shift based on the sampling rate
         shift_frequency = sample_rate
 
@@ -79,7 +82,7 @@ class SamplingClass(QtWidgets.QWidget):
         left_shifted_plot = pg.PlotDataItem(
             shifted_freqs_left,
             magnitude,
-            pen=pg.mkPen('r', width=1, style=pg.QtCore.Qt.DashLine)
+            pen=pg.mkPen('r', width=6, style=pg.QtCore.Qt.DashLine)
         )
         graph.graphWidget.addItem(left_shifted_plot)
 
@@ -88,7 +91,7 @@ class SamplingClass(QtWidgets.QWidget):
         right_shifted_plot = pg.PlotDataItem(
             shifted_freqs_right,
             magnitude,
-            pen=pg.mkPen('b', width=1, style=pg.QtCore.Qt.DashLine)
+            pen=pg.mkPen('b', width=6, style=pg.QtCore.Qt.DashLine)
         )
         graph.graphWidget.addItem(right_shifted_plot)
 
