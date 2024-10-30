@@ -19,8 +19,8 @@ class ComposedSignal:
         sinusoid_generated= sinusoid.generate_sinusoid(self.t_window)
         self.component_list_numpy.append(sinusoid_generated)
         self.compose_signal()
-
-        if attr_list:
+        
+        if attr_list is not None:
             attr_list.addItem(f"Component: amplitude= {amp}, freq= {freq}, phase= {phase}")
     
     @classmethod
@@ -35,6 +35,7 @@ class ComposedSignal:
     def show_components(cls, component_list_widget, index): #index used to know which signal to show its components 
         selected_signal= cls.composed_signals_list[index]
         cls.selected_index=index
+        component_list_widget.clear()
         component_num=1
         for comp in selected_signal.component_list_sinusoid:
             component_list_widget.addItem(f"Component {component_num}: amplitude= {comp.amp}, frequency= {comp.freq}, phase= {comp.phase}")
@@ -47,9 +48,12 @@ class ComposedSignal:
         signals_List.addItem(f"Composed_signal {len(ComposedSignal.composed_signals_list)}")
    
     @classmethod
-    def remove_signal(cls,signals_List_widget, index):
-        _= cls.composed_signals_list.pop(index) #remove composedSignal object
+    def remove_signal(cls,signals_List_widget, components_list, index):
+        removed_signal= cls.composed_signals_list.pop(index) #remove composedSignal instance and return it
+        del removed_signal.component_list_numpy
+        del removed_signal.component_list_sinusoid
         signals_List_widget.takeItem(index)
+        components_list.clear()
 
     def get_composed_signal(self):
         return self.composed_signal

@@ -202,7 +202,7 @@ class MainWindow(QMainWindow):
             signals_List_widget = self.signals_List
             selected_row = signals_List_widget.selectionModel().currentIndex().row()
             remove_signal_action = context_menu.addAction("Remove Signal")
-            remove_signal_action.triggered.connect(lambda: ComposedSignal.remove_signal(signals_List_widget, selected_row))
+            remove_signal_action.triggered.connect(lambda: ComposedSignal.remove_signal(signals_List_widget,self.components_List, selected_row))
 
             show_components_action = context_menu.addAction("Show Components")
             show_components_action.triggered.connect(lambda: ComposedSignal.show_components(self.components_List, selected_row))
@@ -216,6 +216,7 @@ class MainWindow(QMainWindow):
             selected_row = components_list_widget.selectionModel().currentIndex().row() 
             remove_component_action = context_menu.addAction("Remove Component")
             remove_component_action.triggered.connect(lambda: ComposedSignal.remove_component(components_list_widget, selected_row))
+
         else:
             return         
 
@@ -242,7 +243,6 @@ class MainWindow(QMainWindow):
         self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,(1/self.sample_rate),self.rec_method)
         #self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
         self.plot_recosntruction()
-
 
     def show_default(self):
         print('first 11')
