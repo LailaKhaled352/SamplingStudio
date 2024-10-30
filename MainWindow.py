@@ -7,7 +7,7 @@ import pyqtgraph as pg
 from Graph import Graph
 from Signal import Signal
 from Load import Load
-from ComposedSignal import ComposedSignal
+from ComposedSignal import ComposedSignal, set_default_composer
 import numpy as np
 from sampling import SamplingClass
 import os 
@@ -154,6 +154,7 @@ class MainWindow(QMainWindow):
     def save_signal(self):
         self.attr_List.clear()
         self.composed_signal_instance.save_signal(self.signals_List) #save this current instance
+        self.load_composed_signal(index=(self.signals_List.count()-1))
         self.composed_signal_instance= ComposedSignal() #create a new instance to use here for next added components
 
     def create_context_menu(self, position):
@@ -195,6 +196,9 @@ class MainWindow(QMainWindow):
     
     def contextMenuEvent(self, event):
         self.create_context_menu(event.pos())
+
+    def show_default_composer(self):
+        set_default_composer(self.signals_List)
 
     def load_composed_signal(self, index):
         selected_signal= ComposedSignal.composed_signals_list[index]
@@ -242,5 +246,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show_default()
+    window.show_default_composer()
     window.show()
     sys.exit(app.exec_()) 
