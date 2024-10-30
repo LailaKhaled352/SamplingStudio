@@ -1,7 +1,7 @@
 import numpy as np 
 import pywt
 class Recosntruction:
-    def __init__(self,time_before_sampling,time_samples,x_samples,T_s,reconstruction_type="Whittaker-Shannon"):
+    def __init__(self,time_before_sampling,time_samples,x_samples,T_s,reconstruction_type):
         self.time_before_sampling=time_before_sampling
         self.time_samples=time_samples
         self.x_samples=x_samples
@@ -23,14 +23,17 @@ class Recosntruction:
         else:
             return self.spectral_extrapolation()
         
-    def update_recosntruction(self,time_before_sampling,time_samples,x_samples,T_s,reconstruction_type):
+    def update_recosntruction(self,graph2,time_before_sampling,time_samples,x_samples,T_s,reconstruction_type):
         print("reconstruction1")
         self.time_before_sampling=time_before_sampling
         self.time_samples=time_samples
         self.x_samples=x_samples
         self.T_s=T_s
         self.reconstruction_type=reconstruction_type
+        graph2.clear_signal()
+        graph2.set_signal(self.time_before_sampling, self.recons_method())
         print("reconstruction2")
+        return self.recons_method() 
     
        
     def whittaker_shannon_reconstruction(self):
