@@ -33,6 +33,7 @@ class ComposedSignal:
    
     @classmethod
     def show_components(cls, component_list_widget, index): #index used to know which signal to show its components 
+        component_list_widget.clear()
         selected_signal= cls.composed_signals_list[index]
         cls.selected_index=index
         component_list_widget.clear()

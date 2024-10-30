@@ -320,8 +320,19 @@ class MainWindow(QMainWindow):
               self.update_frequency_label()
             else:
              print("Invalid max frequency. Please check the signal.")
+    def remove_signal(self):
+            self.clear_signals()
+            signal = Signal(graph_num=1)
+            self.reconstruct=Recosntruction(self.signal.signal_data_time,self.time_samples,self.amplitude_samples,self.reconstruction_method.currentText())
+            self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
+            self.plot_recosntruction()
+
     def clear_signals(self):
+        # Clear signals from all graphs
         self.graph1.clear_signal()
+        self.graph2.clear_signal()
+        self.graph3.clear_signal()
+        self.graph4.clear_signal()
 
 
 if __name__ == '__main__':

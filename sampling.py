@@ -63,6 +63,8 @@ class SamplingClass(QtWidgets.QWidget):
 
         # Clear previous frequency plots
         graph.clear_signal()
+        # Clear previous frequency plots
+        graph.clear_signal()
 
         # Plot the original frequency spectrum in green
         original_plot = pg.PlotDataItem(
