@@ -83,18 +83,18 @@ def set_default_composer(signals_list):
     composed3= ComposedSignal()
 
     composed1.add_component(freq=5, amp=2, phase=0)
-    composed1.add_component(freq=4, amp=3, phase=45)
-    composed1.add_component(freq=3, amp=1, phase=90)
+    composed1.add_component(freq=4, amp=3, phase=0)
+    composed1.add_component(freq=3, amp=1, phase=0)
     composed1.save_signal(signals_list)
 
-    composed2.add_component(freq=8, amp=5, phase=0)
-    composed2.add_component(freq=2, amp=1, phase=0)
+    composed2.add_component(freq=8, amp=5, phase=90)
+    composed2.add_component(freq=2, amp=1, phase=90)
     composed2.add_component(freq=3, amp=1, phase=90)
     composed2.save_signal(signals_list)
 
-    composed3.add_component(freq=1, amp=5, phase=0)
-    composed3.add_component(freq=50, amp=1, phase=0)
-    composed3.add_component(freq=2, amp=4, phase=0)
+    composed3.add_component(freq=57, amp=5, phase=0)
+    composed3.add_component(freq=20, amp=1, phase=0)
+    composed3.add_component(freq=30, amp=4, phase=0)
     composed3.save_signal(signals_list)
 
 
