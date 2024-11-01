@@ -99,8 +99,8 @@ class MainWindow(QMainWindow):
         self.noise_slider.setValue(30)
         self.noise_label = self.findChild(QLabel, 'snrlabel')
         self.noise_slider.valueChanged.connect(self.update_noise) 
-        value = self.noise_slider.value()
-        self.noise_label.setText(f"{value} dB")
+        self.value = 30 
+        self.noise_label.setText(f"{self.value} dB")
         
 
         # reconstruction connected 
@@ -115,7 +115,9 @@ class MainWindow(QMainWindow):
         self.sampled_data=None
         
 
-
+    def update_noise_label(self):
+        self.value=self.noise_slider.value()
+        self.noise_label.setText(f"{self.value} dB")
 
     def plot_recosntruction(self):
         if self.signal is not None:
@@ -151,7 +153,7 @@ class MainWindow(QMainWindow):
             self.sampleSlider.setValue(int(2 * self.sample.max_freq))  # Start at 2*f_max
             self.sample.sampling_mode = 0
             # Update fmax label
-            self.fmaxLabel.setText(f"{4 * self.sample.max_freq} Hz")
+            self.fmaxLabel.setText(f"{int(4 * self.sample.max_freq)} Hz")
             self.indicatLabel.setText("1 Hz")
         if self.normalRadio.isChecked():
             # Set slider for normalized frequency mode
@@ -200,6 +202,7 @@ class MainWindow(QMainWindow):
         updated_signal_data_amplitude =self.signal.add_noise(self.noise_slider.value())
         self.update_sampling_frequency(updated_signal_data_amplitude)
         self.plot_recosntruction()
+        self.update_noise_label()
 
 
     #Fatma
@@ -254,7 +257,7 @@ class MainWindow(QMainWindow):
 
     def update_frequency_label(self):
      if self.actualRadio.isChecked():
-        self.fmaxLabel.setText(f"{4 * self.sample.max_freq} Hz")
+        self.fmaxLabel.setText(f"{int(4 * self.sample.max_freq)} Hz")
         self.indicatLabel.setText(f"{self.sample_rate} Hz")
      elif self.normalRadio.isChecked():
         self.fmaxLabel.setText("4 x fmax")
@@ -278,8 +281,8 @@ class MainWindow(QMainWindow):
          self.sampleSlider.setValue(int(2 * self.sample.max_freq))
         elif self.normalRadio.isChecked():
          self.sampleSlider.setValue(1)
-
         sampled_time, sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
+        print(f"composed signal,len(sampled_time) {len(sampled_time)}") #to debug
         self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,self.signal.signal_data_time,self.signal.signal_data_amplitude)
         self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,(1/self.sample_rate),self.rec_method)
         #self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
@@ -288,22 +291,14 @@ class MainWindow(QMainWindow):
         self.plot_recosntruction()
 
     def show_default(self):
-        print('first 11')
-
         self.signal = Signal(graph_num=1)
          # Update max_freq before sampling
         self.sample.max_freq = self.sample.get_max_freq(self.signal.signal_data_time, self.signal.signal_data_amplitude)
         # Set a default sample rate based on max_freq
         self.sample_rate = max(1, int(2 * self.sample.max_freq))
         self.sampleSlider.setValue(self.sample_rate if self.actualRadio.isChecked() else 1)
-
-    
-
-        self.sampled_time, self.sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
-        print('first')
+        self.sampled_time, self.sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate) 
         self.sample.plot_time_domain(self.graph1,self.sampled_time,self.sampled_data,self.signal.signal_data_time,self.signal.signal_data_amplitude)
-        print('second')
-
         self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.rec_method)
         self.sample.plot_frequency_domain(self.graph4,self.sample_rate,self.signal.signal_data_time, self.signal.signal_data_amplitude)
         self.plot_recosntruction()

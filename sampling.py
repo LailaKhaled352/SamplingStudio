@@ -52,6 +52,7 @@ class SamplingClass(QtWidgets.QWidget):
             symbol='x', 
             size=10
         )
+        print(f"len(sampled_time) = {len(sampled_time)}")
         graph.graphWidget.addItem(scatter_plot)  # Access the PlotWidget to add the scatter plot
         print('plotting function')
 
@@ -63,8 +64,7 @@ class SamplingClass(QtWidgets.QWidget):
 
         # Clear previous frequency plots
         graph.clear_signal()
-        # Clear previous frequency plots
-        graph.clear_signal()
+    
 
         # Plot the original frequency spectrum in green
         original_plot = pg.PlotDataItem(
