@@ -8,8 +8,8 @@ class Signal:
     def __init__(self, graph_num,csv_path ='mmg.csv'):
         self.csv_path = csv_path
         csvFile = pd.read_csv(self.csv_path)   
-        self.signal_data_time = csvFile.iloc[:1000, 0].values
-        self.signal_data_amplitude = csvFile.iloc[:1000, 1].values
+        self.signal_data_time = csvFile.iloc[:3000, 0].values
+        self.signal_data_amplitude = csvFile.iloc[:3000, 1].values
         self.graph_num= graph_num
         self.noise=0
         

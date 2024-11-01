@@ -41,7 +41,7 @@ class SamplingClass(QtWidgets.QWidget):
         
         graph.clear_signal()  # Clear previous plots
         # Plot original signal
- 
+        print(f"signal_data_time[-1] {signal_data_time[-1]}")
         graph.set_signal(signal_data_time,signal_data_amplitude)
             
         # Plot sampled signal as points 
@@ -52,9 +52,7 @@ class SamplingClass(QtWidgets.QWidget):
             symbol='x', 
             size=10
         )
-        print(f"len(sampled_time) = {len(sampled_time)}")
         graph.graphWidget.addItem(scatter_plot)  # Access the PlotWidget to add the scatter plot
-        print('plotting function')
 
     def plot_frequency_domain(self, graph, sample_rate,signal_data_time,signal_data_amplitude):
      if signal_data_amplitude is not None:

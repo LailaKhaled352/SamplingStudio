@@ -39,11 +39,11 @@ class ComposedSignal:
     
     def save_signal(self, signals_List):
         max_freq=self.get_max_freq()
-        end_window= int(1000/(max_freq))
-        self.t_window= np.linspace(0,end_window,1000)
-        for sinusoid in self.component_list_sinusoid:
-            sinusoid_generated= sinusoid.generate_sinusoid(self.t_window)
-            self.component_list_numpy.append(sinusoid_generated)
+        print(f"max_freq{max_freq}")
+        end_window= int(1000/(2*max_freq))
+        points_in_time= 3000
+        self.t_window= np.linspace(0,end_window,points_in_time)
+        self.component_list_numpy = [sinusoid.generate_sinusoid(self.t_window) for sinusoid in self.component_list_sinusoid]
         self.compose_signal()
         ComposedSignal.composed_signals_list.append(self)
         signals_List.addItem(f"Composed Signal {len(ComposedSignal.composed_signals_list)}")
