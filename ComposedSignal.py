@@ -47,7 +47,7 @@ class ComposedSignal:
         self.compose_signal()
         ComposedSignal.composed_signals_list.append(self)
         signals_List.addItem(f"Composed Signal {len(ComposedSignal.composed_signals_list)}")
-   
+        
     @classmethod
     def remove_signal(cls,signals_List_widget, components_list, index):
         removed_signal= cls.composed_signals_list.pop(index) #remove composedSignal instance and return it

@@ -84,12 +84,13 @@ class MainWindow(QMainWindow):
         self.signals_List = self.findChild(QListWidget, 'signalsList')
         self.components_List = self.findChild(QListWidget, 'componList')
         self.attr_List = self.findChild(QListWidget, 'attrList')
-
+        self.signals_List.setMouseTracking(True)
+        self.signals_List.itemEntered.connect(self.on_item_hovered)
+       
         self.save_signal_button= self.findChild(QPushButton, 'GenerateButton')
         self.save_signal_button.clicked.connect(self.save_signal)
 
-        # Initial configuration
-        # self.update_frequency_mode()
+      
 
         # Judy
 
@@ -206,6 +207,10 @@ class MainWindow(QMainWindow):
 
 
     #Fatma
+    def on_item_hovered(self, item):
+        index = self.signals_List.row(item)
+        ComposedSignal.show_components(self.components_List, index) 
+
     def add_component(self):
         freq= self.frequency_entry.value() 
         amp=self.amplitude_entry.value()
@@ -234,8 +239,7 @@ class MainWindow(QMainWindow):
             selected_row = signals_List_widget.selectionModel().currentIndex().row()
             load_signal_action = context_menu.addAction("Load Signal")
             load_signal_action.triggered.connect(lambda: self.load_composed_signal(selected_row))
-            show_components_action = context_menu.addAction("Show Components")
-            show_components_action.triggered.connect(lambda: ComposedSignal.show_components(self.components_List, selected_row))
+        
             remove_signal_action = context_menu.addAction("Remove Signal")
             remove_signal_action.triggered.connect(lambda: ComposedSignal.remove_signal(signals_List_widget,self.components_List, selected_row))
 
