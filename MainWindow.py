@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
         self.sampleSlider = self.findChild(QSlider, 'sampleSlider')
         self.sampleSlider.setMinimum(1)
         # Set the default slider value to 2 * f_max
-        self.sampleSlider.setValue(2 * self.sample.max_freq)
+        self.sampleSlider.setValue((2 * self.sample.max_freq)+1)
         self.actualRadio = self.findChild(QRadioButton, 'actualRadio')
         self.normalRadio = self.findChild(QRadioButton, 'normalRadio')
 
@@ -161,7 +161,7 @@ class MainWindow(QMainWindow):
             self.sampleSlider.setMinimum(1)
             self.sampleSlider.setMaximum(int(4 * round(self.sample.max_freq, 2)))
             self.sampleSlider.setSingleStep(1)
-            self.sampleSlider.setValue(self.last_actual_mode_value or int(2 * self.sample.max_freq))  # Use last saved value or default
+            self.sampleSlider.setValue(self.last_actual_mode_value or (int(2 * self.sample.max_freq)+1))  # Use last saved value or default
             self.sample.sampling_mode = 0
             # Update fmax label
             self.fmaxLabel.setText(f"{int(4 * self.sample.max_freq)} Hz")
