@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
         self.sampleSlider = self.findChild(QSlider, 'sampleSlider')
         self.sampleSlider.setMinimum(1)
         # Set the default slider value to 2 * f_max
-        self.sampleSlider.setValue(int(2 * self.sample.max_freq))
+        self.sampleSlider.setValue((2 * self.sample.max_freq)+1)
         self.actualRadio = self.findChild(QRadioButton, 'actualRadio')
         self.normalRadio = self.findChild(QRadioButton, 'normalRadio')
 
@@ -92,13 +92,12 @@ class MainWindow(QMainWindow):
         self.signals_List = self.findChild(QListWidget, 'signalsList')
         self.components_List = self.findChild(QListWidget, 'componList')
         self.attr_List = self.findChild(QListWidget, 'attrList')
-        self.signals_List.setMouseTracking(True)
-        self.signals_List.itemEntered.connect(self.on_item_hovered)
-       
+
         self.save_signal_button= self.findChild(QPushButton, 'GenerateButton')
         self.save_signal_button.clicked.connect(self.save_signal)
 
-      
+        # Initial configuration
+        # self.update_frequency_mode()
 
         # Judy
 
@@ -106,11 +105,7 @@ class MainWindow(QMainWindow):
         self.noise_slider = self.findChild(QSlider, 'noiseSlider')
         self.noise_slider.setRange(1, 30) 
         self.noise_slider.setValue(30)
-        self.noise_label = self.findChild(QLabel, 'snrlabel')
         self.noise_slider.valueChanged.connect(self.update_noise) 
-        self.value = 30 
-        self.noise_label.setText(f"{self.value} dB")
-        
 
         # reconstruction connected 
         self.reconstruction_method = self.findChild(QComboBox, 'reconstructon_combobox')
@@ -124,14 +119,12 @@ class MainWindow(QMainWindow):
         self.sampled_data=None
         
 
-    def update_noise_label(self):
-        self.value=self.noise_slider.value()
-        self.noise_label.setText(f"{self.value} dB")
+
 
     def plot_recosntruction(self):
+        reconstructed_signal = self.reconstruct.recons_method()
         if self.signal is not None:
             self.reconstruct.update_recosntruction(self.graph2,self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.rec_method)
-            reconstructed_signal = self.reconstruct.recons_method()
         # Calculate error and plot it in graph3
             self.error_calculation = ErrorCalculation(self.signal.signal_data_time,self.signal.signal_data_amplitude, reconstructed_signal)
             self.error_calculation.calculate_error()
@@ -154,6 +147,10 @@ class MainWindow(QMainWindow):
         if self.sample.sampling_mode == 0:  # Actual mode
             self.last_actual_mode_value = self.sampleSlider.value()
 
+    def save_actual_mode_value(self):
+        """Save the current slider value when switching from actual mode."""
+        if self.sample.sampling_mode == 0:  # Actual mode
+            self.last_actual_mode_value = self.sampleSlider.value()
 
 
     def update_frequency_mode(self):
@@ -165,7 +162,7 @@ class MainWindow(QMainWindow):
             # max_frequency = int(4 * self.sample.max_freq)
             print({self.sample.max_freq})
             self.sampleSlider.setMinimum(1)
-            self.sampleSlider.setMaximum(int(4 * self.sample.max_freq))
+            self.sampleSlider.setMaximum(int(4 * round(self.sample.max_freq, 2)))
             self.sampleSlider.setSingleStep(1)
             self.sampleSlider.setValue(self.last_actual_mode_value or (int(2 * self.sample.max_freq)))
               # Start at 2*f_max
@@ -203,6 +200,7 @@ class MainWindow(QMainWindow):
             print('division b')
             self.indicatLabel.setText(f"{self.sample_rate} Hz")
         if self.sample.sampling_mode == 1:
+           print(f"Using last actual mode value: {self.last_actual_mode_value} for calculation")
 
             # Normalized mode - slider value is a multiplier for f_max
            self.sample_rate = max((self.sampleSlider.value() / 10) * self.sample.max_freq, 1)
@@ -212,7 +210,7 @@ class MainWindow(QMainWindow):
 
         if self.signal is not None:  # Ensure a signal is loaded
             self.sample.update_sampling( self.graph1,self.signal.signal_data_time,signal_data_amplitude,self.sample_rate,self.signal)
-            self.sample.plot_frequency_domain(self.graph4, self.sample_rate,self.signal.signal_data_time,self.signal.signal_data_amplitude)
+            self.sample.plot_frequency_domain(self.graph4, self.sample_rate,self.signal.signal_data_time,signal_data_amplitude)
             self.plot_recosntruction()
             self.update_frequency_label() 
 
@@ -224,14 +222,9 @@ class MainWindow(QMainWindow):
         self.updated_signal_data_amplitude =self.signal.add_noise(self.noise_slider.value())
         self.update_sampling_frequency(self.updated_signal_data_amplitude)
         self.plot_recosntruction()
-        self.update_noise_label()
 
 
     #Fatma
-    def on_item_hovered(self, item):
-        index = self.signals_List.row(item)
-        ComposedSignal.show_components(self.components_List, index) 
-
     def add_component(self):
         freq= self.frequency_entry.value() 
         amp=self.amplitude_entry.value()
@@ -258,14 +251,15 @@ class MainWindow(QMainWindow):
         if self.signals_List.underMouse():
             signals_List_widget = self.signals_List
             selected_row = signals_List_widget.selectionModel().currentIndex().row()
-            load_signal_action = context_menu.addAction("Load Signal")
-            load_signal_action.triggered.connect(lambda: self.load_composed_signal(selected_row))
-        
             remove_signal_action = context_menu.addAction("Remove Signal")
             remove_signal_action.triggered.connect(lambda: ComposedSignal.remove_signal(signals_List_widget,self.components_List, selected_row))
 
+            show_components_action = context_menu.addAction("Show Components")
+            show_components_action.triggered.connect(lambda: ComposedSignal.show_components(self.components_List, selected_row))
 
 
+            load_signal_action = context_menu.addAction("Load Signal")
+            load_signal_action.triggered.connect(lambda: self.load_composed_signal(selected_row))
 
         elif self.components_List.underMouse():
             components_list_widget= self.components_List
@@ -286,7 +280,9 @@ class MainWindow(QMainWindow):
         self.indicatLabel.setText(f"{self.sample_rate} Hz")
      elif self.normalRadio.isChecked():
         factor = self.sampleSlider.value() / 10
+        factor = self.sampleSlider.value() / 10
         self.fmaxLabel.setText("4 x fmax")
+        self.indicatLabel.setText(f"{factor:.1f} x fmax")
         self.indicatLabel.setText(f"{factor:.1f} x fmax")
 
     def contextMenuEvent(self, event):
@@ -307,8 +303,8 @@ class MainWindow(QMainWindow):
          self.sampleSlider.setValue(int(2 * self.sample.max_freq))
         elif self.normalRadio.isChecked():
          self.sampleSlider.setValue(1)
+
         sampled_time, sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
-        print(f"composed signal,len(sampled_time) {len(sampled_time)}") #to debug
         self.sample.plot_time_domain(self.graph1,sampled_time,sampled_data,self.signal.signal_data_time,self.signal.signal_data_amplitude)
         self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,(1/self.sample_rate),self.rec_method)
         #self.graph1.set_signal(self.signal.signal_data_time, self.signal.signal_data_amplitude)
@@ -317,14 +313,22 @@ class MainWindow(QMainWindow):
         self.plot_recosntruction()
 
     def show_default(self):
+        print('first 11')
+
         self.signal = Signal(graph_num=1)
          # Update max_freq before sampling
         self.sample.max_freq = self.sample.get_max_freq(self.signal.signal_data_time, self.signal.signal_data_amplitude)
         # Set a default sample rate based on max_freq
         self.sample_rate = max(1, int(2 * self.sample.max_freq))
         self.sampleSlider.setValue(self.sample_rate if self.actualRadio.isChecked() else 1)
-        self.sampled_time, self.sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate) 
+
+    
+
+        self.sampled_time, self.sampled_data =self.sample.sample_signal(self.signal.signal_data_time,self.signal.signal_data_amplitude,self.sample_rate)
+        print('first')
         self.sample.plot_time_domain(self.graph1,self.sampled_time,self.sampled_data,self.signal.signal_data_time,self.signal.signal_data_amplitude)
+        print('second')
+
         self.reconstruct=Recosntruction(self.signal.signal_data_time,self.sample.sampled_time,self.sample.sampled_data,self.sample.sampling_interval,self.rec_method)
         self.sample.plot_frequency_domain(self.graph4,self.sample_rate,self.signal.signal_data_time, self.signal.signal_data_amplitude)
         self.plot_recosntruction()
@@ -345,19 +349,8 @@ class MainWindow(QMainWindow):
               self.update_frequency_label()
             else:
              print("Invalid max frequency. Please check the signal.")
-    def remove_signal(self):
-            self.clear_signals()
-            signal = Signal(graph_num=1)
-            self.reconstruct=Recosntruction(self.signal.signal_data_time,self.time_samples,self.amplitude_samples,self.reconstruction_method.currentText())
-            self.graph1.set_signal(signal.signal_data_time, signal.signal_data_amplitude)
-            self.plot_recosntruction()
-
     def clear_signals(self):
-        # Clear signals from all graphs
         self.graph1.clear_signal()
-        self.graph2.clear_signal()
-        self.graph3.clear_signal()
-        self.graph4.clear_signal()
 
 
 if __name__ == '__main__':
