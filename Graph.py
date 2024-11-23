@@ -29,7 +29,8 @@ class Graph:
         
         # Label axes with color and size
         self.graphWidget.setLabel('left', ylabel, **{'color': '#ffffff', 'font-size': '10pt'})
-        self.graphWidget.setLabel('bottom', xlabel, **{'color': '#ffffff', 'font-size': '10pt'})        
+        self.graphWidget.setLabel('bottom', xlabel, **{'color': '#ffffff', 'font-size': '10pt'}) 
+        #self.graphWidget.setXRange(1, 20, padding=0)
 
 
         

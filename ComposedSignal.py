@@ -34,15 +34,15 @@ class ComposedSignal:
         component_list_widget.clear()
         component_num=1
         for comp in selected_signal.component_list_sinusoid:
-            component_list_widget.addItem(f"Component {component_num}: amplitude= {comp.amp}, frequency= {comp.freq}, phase= {comp.phase}")
+            component_list_widget.addItem(f"Component {component_num}: A= {comp.amp}, F= {comp.freq}, phi= {comp.phase}")
             component_num+=1
     
     def save_signal(self, signals_List):
         max_freq=self.get_max_freq()
         print(f"max_freq{max_freq}")
         end_window= int(1000/(2*max_freq))
-        points_in_time= 3000
-        self.t_window= np.linspace(0,end_window,points_in_time)
+        points_in_time= 4000
+        self.t_window= np.linspace(0,20,points_in_time)
         self.component_list_numpy = [sinusoid.generate_sinusoid(self.t_window) for sinusoid in self.component_list_sinusoid]
         self.compose_signal()
         ComposedSignal.composed_signals_list.append(self)
@@ -83,14 +83,14 @@ def set_default_composer(signals_list):
     composed1.add_component(freq=3, amp=1, phase=0)
     composed1.save_signal(signals_list)
 
-    composed2.add_component(freq=1, amp=1, phase=0)
-    # composed2.add_component(freq=2, amp=1, phase=90)
+    composed2.add_component(freq=6, amp=0.2, phase=0)
+    composed2.add_component(freq=2, amp=0.5, phase=0)
     # composed2.add_component(freq=3, amp=1, phase=90)
     composed2.save_signal(signals_list)
 
-    composed3.add_component(freq=28, amp=1, phase=0)
-    composed3.add_component(freq=2, amp=1, phase=0)
-    composed3.add_component(freq=3, amp=1, phase=0)
+    composed3.add_component(freq=50, amp=1, phase=0)
+    composed3.add_component(freq=2, amp=4, phase=0)
+    composed3.add_component(freq=1, amp=5, phase=0)
     composed3.save_signal(signals_list)
 
 

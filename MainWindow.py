@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication,QPushButton,QListWidget ,QSpinBox, QWidget, QLabel ,  QSlider, QRadioButton, QComboBox, QTableWidget, QTableWidgetItem, QCheckBox,QMenu,QTextEdit, QDialog, QFileDialog, QInputDialog, QSizePolicy,QScrollArea,QVBoxLayout,QHBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QApplication,QPushButton,QListWidget, QDoubleSpinBox ,QSpinBox, QWidget, QLabel ,  QSlider, QRadioButton, QComboBox, QTableWidget, QTableWidgetItem, QCheckBox,QMenu,QTextEdit, QDialog, QFileDialog, QInputDialog, QSizePolicy,QScrollArea,QVBoxLayout,QHBoxLayout
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QCursor,QBrush
 from PyQt5.QtCore import QPoint
@@ -27,7 +27,9 @@ class MainWindow(QMainWindow):
         self.reconstruct=None
         self.sample.max_freq = 0 
         self.sampleSlider.setValue(1) 
-
+        self.actual_mode_value = 0
+        self.last_actual_mode_value = 0
+        self.updated_signal_data_amplitude=None
         #Laila
             # Initialize the existing PlotWidget
         self.graph1 = self.findChild(pg.PlotWidget, 'graph1_2')
@@ -71,11 +73,17 @@ class MainWindow(QMainWindow):
       # Set the default radio button to "Actual" mode
         self.actualRadio.setChecked(True)
         self.update_frequency_mode()
+        if self.normalRadio.isChecked():
+            self.sampleSlider.setMinimum(1)  # Minimum value for normalized mode
+            self.sampleSlider.setMaximum(40)  # Maximum value for normalized mode (corresponds to 4.0f_max)
+            self.sampleSlider.setSingleStep(1)  # Set step to 1
+            self.sampleSlider.setValue(1)  # Start at 0.1 * f_max
+        self.sampleSlider.valueChanged.connect(self.update_frequency_label)    
         #Fatma
         self.add_component_button= self.findChild(QPushButton, 'addComponent')
         self.frequency_entry= self.findChild(QSpinBox, 'freqSpinBox')
         self.phase_entry= self.findChild(QSpinBox, 'phaseSpinBox')
-        self.amplitude_entry= self.findChild(QSpinBox, 'ampSpinBox')
+        self.amplitude_entry= self.findChild(QDoubleSpinBox, 'doubleSpinBox')
         self.frequency_entry.setValue(1)
         self.phase_entry.setValue(0)
         self.amplitude_entry.setValue(1)
@@ -135,14 +143,22 @@ class MainWindow(QMainWindow):
 
     def update_sampling_freq(self):
         if self.signal is not None:
-            self.update_sampling_frequency(self.signal.signal_data_amplitude)   
+            if(self.updated_signal_data_amplitude is not None):
+                self.update_sampling_frequency(self.updated_signal_data_amplitude)
+            else:
+                self.update_sampling_frequency(self.signal.signal_data_amplitude)
             self.update_frequency_label() 
    
+    def save_actual_mode_value(self):
+        """Save the current slider value when switching from actual mode."""
+        if self.sample.sampling_mode == 0:  # Actual mode
+            self.last_actual_mode_value = self.sampleSlider.value()
 
 
 
     def update_frequency_mode(self):
-
+        
+        self.save_actual_mode_value()
         if self.actualRadio.isChecked():
             # Set slider for actual frequency mode
             print('enter mode')
@@ -151,25 +167,30 @@ class MainWindow(QMainWindow):
             self.sampleSlider.setMinimum(1)
             self.sampleSlider.setMaximum(int(4 * self.sample.max_freq))
             self.sampleSlider.setSingleStep(1)
-            self.sampleSlider.setValue(int(2 * self.sample.max_freq))  # Start at 2*f_max
+            self.sampleSlider.setValue(self.last_actual_mode_value or (int(2 * self.sample.max_freq)))
+              # Start at 2*f_max
             self.sample.sampling_mode = 0
             # Update fmax label
             self.fmaxLabel.setText(f"{int(4 * self.sample.max_freq)} Hz")
-            self.indicatLabel.setText("1 Hz")
-        if self.normalRadio.isChecked():
+            self.indicatLabel.setText(f"{self.sampleSlider.value()} Hz")
+        elif self.normalRadio.isChecked():
+            normalized_value = self.last_actual_mode_value / self.sample.max_freq if self.last_actual_mode_value else 1
             # Set slider for normalized frequency mode
-            self.sampleSlider.setRange(1, 4)
-            self.sampleSlider.setSingleStep(1)
-            self.sampleSlider.setValue(1)  # Start at 1 * f_max
+            self.sampleSlider.setMinimum(5)  # Corresponding to 0.5 * f_max (5 means 0.5 when divided by 10)
+            self.sampleSlider.setMaximum(40)  # Corresponding to 4 * f_max (40 means 4.0 when divided by 10)
+            self.sampleSlider.setSingleStep(5)  # Step by 0.5 * f_max
+            self.sampleSlider.setValue(int(round(normalized_value * 10)))  # Nearest to actual frequency
             self.sample.sampling_mode = 1
-             # Update fmax label
             self.fmaxLabel.setText("4 x fmax")
-            self.indicatLabel.setText("1 x fmax")
+            self.indicatLabel.setText(f"{self.sampleSlider.value() / 10:.1f} x fmax")
 
 
       # Immediately update sampling frequency based on new slider value
         if self.signal is not None:
-            self.update_sampling_frequency(self.signal.signal_data_amplitude)
+            if(self.updated_signal_data_amplitude is not None):
+                self.update_sampling_frequency(self.updated_signal_data_amplitude)
+            else:
+                self.update_sampling_frequency(self.signal.signal_data_amplitude)
             self.update_frequency_label() 
 
 
@@ -184,8 +205,8 @@ class MainWindow(QMainWindow):
         if self.sample.sampling_mode == 1:
 
             # Normalized mode - slider value is a multiplier for f_max
-           self.sample_rate = max(self.sampleSlider.value() * self.sample.max_freq, 1)
-           self.indicatLabel.setText(f"{self.sampleSlider.value()} x fmax")
+           self.sample_rate = max((self.sampleSlider.value() / 10) * self.sample.max_freq, 1)
+           self.indicatLabel.setText(f"{self.sampleSlider.value() / 10:.1f} x fmax")
         # Update the sampling in SamplingClass
         self.sample.sampling_interval = 1 / self.sample_rate
 
@@ -200,8 +221,8 @@ class MainWindow(QMainWindow):
     # Judy 
     def update_noise(self):
         self.graph1.clear_signal()
-        updated_signal_data_amplitude =self.signal.add_noise(self.noise_slider.value())
-        self.update_sampling_frequency(updated_signal_data_amplitude)
+        self.updated_signal_data_amplitude =self.signal.add_noise(self.noise_slider.value())
+        self.update_sampling_frequency(self.updated_signal_data_amplitude)
         self.plot_recosntruction()
         self.update_noise_label()
 
@@ -264,8 +285,9 @@ class MainWindow(QMainWindow):
         self.fmaxLabel.setText(f"{int(4 * self.sample.max_freq)} Hz")
         self.indicatLabel.setText(f"{self.sample_rate} Hz")
      elif self.normalRadio.isChecked():
+        factor = self.sampleSlider.value() / 10
         self.fmaxLabel.setText("4 x fmax")
-        self.indicatLabel.setText(f"{self.sampleSlider.value()} x fmax")
+        self.indicatLabel.setText(f"{factor:.1f} x fmax")
 
     def contextMenuEvent(self, event):
         self.create_context_menu(event.pos())

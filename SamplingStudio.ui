@@ -104,11 +104,11 @@ QPushButton:pressed {
 </string>
             </property>
             <property name="text">
-             <string>Upload file</string>
+             <string>Browse File</string>
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icons/upload-square-svgrepo-com.png</normaloff>icons/upload-square-svgrepo-com.png</iconset>
+              <normaloff>Samplinggggggg/SamplingStudio/icons/upload-square-svgrepo-com.png</normaloff>Samplinggggggg/SamplingStudio/icons/upload-square-svgrepo-com.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -202,11 +202,11 @@ QPushButton:pressed {
 </string>
             </property>
             <property name="text">
-             <string>Remove File</string>
+             <string>Clear Graphs</string>
             </property>
             <property name="icon">
              <iconset>
-              <normaloff>icons/icons8-remove-document-32.png</normaloff>icons/icons8-remove-document-32.png</iconset>
+              <normaloff>Samplinggggggg/SamplingStudio/icons/icons8-remove-document-32.png</normaloff>Samplinggggggg/SamplingStudio/icons/icons8-remove-document-32.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -341,7 +341,7 @@ margin: 5px 0 ;</string>
     padding-left: 15px;
     margin: 0 5px;
     font-weight: bold;
-    font-size: 18px; /* Adjust font size */
+    font-size: 14px; /* Adjust font size */
     text-align: center;
     height: 20px;
     width: 50px;
@@ -365,6 +365,9 @@ QSpinBox::up-button:hover, QSpinBox::down-button:hover {
     background-color: transparent; /* Make hover background transparent */
     border-radius: 10px;
 }</string>
+                  </property>
+                  <property name="maximum">
+                   <number>1000</number>
                   </property>
                  </widget>
                 </item>
@@ -399,15 +402,9 @@ margin: 5px 0 ;</string>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="ampSpinBox">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
-                  </property>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBox">
                   <property name="styleSheet">
-                   <string notr="true">QSpinBox {
+                   <string notr="true">QDoubleSpinBox {
     background-color: #f0f0f0; /* Light background color */
     color: #235d79; /* Dark text color */
     border: 2px solid #235d79; /* Add a border for a modern look */
@@ -416,30 +413,39 @@ margin: 5px 0 ;</string>
     padding-left: 15px;
     margin: 0 5px;
     font-weight: bold;
-    font-size: 18px; /* Adjust font size */
+    font-size: 14px; /* Adjust font size */
     text-align: center;
     height: 20px;
     width: 50px;
 }
 
 /* QSpinBox Up Button (on the right) */
-QSpinBox::up-button {
+QDoubleSpinBox::up-button {
     width: 25px;
     height: 25px;
     subcontrol-position: right; /* Place the up-button on the right */
 }
 
 /* QSpinBox Down Button (on the left) */
-QSpinBox::down-button {
+QDoubleSpinBox::down-button {
     width: 25px;
     height: 25px;
     subcontrol-position: left; /* Place the down-button on the left */
 }
 
-QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+QDoubleSpinBox::up-button:hover, QSpinBox::down-button:hover {
     background-color: transparent; /* Make hover background transparent */
     border-radius: 10px;
 }</string>
+                  </property>
+                  <property name="decimals">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <double>100.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.100000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -494,7 +500,7 @@ margin: 5px 0 ;</string>
     padding-left: 15px;
     margin: 0 5px;
     font-weight: bold;
-    font-size: 18px; /* Adjust font size */
+    font-size: 14px; /* Adjust font size */
     text-align: center;
     height: 20px;
     width: 50px;
@@ -518,6 +524,9 @@ QSpinBox::up-button:hover, QSpinBox::down-button:hover {
     background-color: transparent; /* Make hover background transparent */
     border-radius: 10px;
 }</string>
+                  </property>
+                  <property name="maximum">
+                   <number>360</number>
                   </property>
                  </widget>
                 </item>
@@ -1481,45 +1490,7 @@ border: 1px solid #3498db; /* Border of the handle when pressed */
                </widget>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_5">
-                <item alignment="Qt::AlignLeft">
-                 <widget class="QLabel" name="startLabel">
-                  <property name="font">
-                   <font>
-                    <family>Overpass Medium</family>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:white;
-margin-top: 3px;</string>
-                  </property>
-                  <property name="text">
-                   <string>0</string>
-                  </property>
-                 </widget>
-                </item>
-                <item alignment="Qt::AlignRight">
-                 <widget class="QLabel" name="endLabel">
-                  <property name="font">
-                   <font>
-                    <family>Overpass Medium</family>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:white;
-margin-top: 3px;</string>
-                  </property>
-                  <property name="text">
-                   <string>20</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <layout class="QHBoxLayout" name="horizontalLayout_5"/>
               </item>
              </layout>
             </item>
