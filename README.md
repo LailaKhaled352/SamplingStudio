@@ -19,8 +19,11 @@ Recover the original signal using three methods: Whittaker-Shannon , DB-3 Wavele
 
 ### Four interactive graphs for:
 Original Signal: Shows sampled points as markers.
+
 Reconstructed Signal: Displays the recovered signal.
+
 Error Visualization: Displays the difference between original and reconstructed signals.
+
 Frequency Domain Analysis: Identifies aliasing effects.
 
 ### Signal Composer:
