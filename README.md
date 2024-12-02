@@ -15,7 +15,7 @@ Load, visualize, and sample a mid-length signal (approx. 1000 points).
 Display sampling frequency in both actual and normalized forms (0×fmax to 4×fmax).
 
 ### Reconstruction:
-Recover the original signal using three methods: Whittaker-Shannon , DB-3 Wavelet, and Zero-order interpolation
+Recover the original signal using three methods: **Whittaker-Shannon , DB-3 Wavelet, and Zero-order interpolation**
 
 ### Four interactive graphs for:
 Original Signal: Shows sampled points as markers.
@@ -28,11 +28,14 @@ Frequency Domain Analysis: Identifies aliasing effects.
 
 ### Signal Composer:
 Load signals from files or compose signals using a built-in mixer.
+
 Add multiple sinusoidal components with adjustable frequencies and magnitudes.
+
 Modify or remove signal components dynamically.
 
 ### Additive Noise Control:
 Add noise to the signal with customizable Signal-to-Noise Ratio (SNR).
+
 Visualize the impact of noise on different signal frequencies.
 
 ### Real-Time Updates:
