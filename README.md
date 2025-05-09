@@ -15,7 +15,7 @@ Load, visualize, and sample a mid-length signal (approx. 1000 points).
 Display sampling frequency in both actual and normalized forms (0×fmax to 4×fmax).
 
 ### Reconstruction:
-Recover the original signal using three methods: **Whittaker-Shannon , DB-3 Wavelet, and Zero-order interpolation**
+Recover the original signal using three methods: **Whittaker-Shannon, DB-3 Wavelet, and Zero-order interpolation**
 
 ### Four interactive graphs for:
 Original Signal: Shows sampled points as markers.
